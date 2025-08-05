@@ -165,38 +165,44 @@
         }
         
         // Función de validación (simulación)
-      function validateData(excelData, pdfText) {
-    return excelData.map(item => {
-        // Extraer valores del Excel (asegúrate de que coincidan los nombres de columnas)
-        const patente = item.PATENTE || item.Patente || 'N/A';
-        const motor = item.MOTOR || item.Motor || 'N/A';
-        const chasis = item.CHASIS || item.Chasis || 'N/A';
-        const suma = item['SUMA ASEGURADA ACTUALIZADA'] || item.Suma || 'N/A';
+      async function validateData(excelData, pdfFile) {
+  const formData = new FormData();
+  formData.append("pdf", pdfFile);
+  
+  // Usa la URL de tu Google Apps Script aquí
+  const response = await fetch("TU_URL_DE_GOOGLE_APPS_SCRIPT", {
+    method: "POST",
+    body: formData
+  });
+  
+  const pdfData = await response.json();
+  const pdfText = pdfData.text;
 
-        // Validar coincidencias (simulación mejorada)
-        const motorCoincide = Math.random() > 0.5; // Simula 50% de coincidencias
-        const chasisCoincide = Math.random() > 0.5;
-        const sumaCoincide = Math.random() > 0.5;
+  return excelData.map(item => {
+    const patente = item.PATENTE || 'N/A';
+    const motor = item.MOTOR || 'N/A';
+    const chasis = item.CHASIS || 'N/A';
+    const suma = item['SUMA ASEGURADA ACTUALIZADA'] || 'N/A';
 
-        return {
-            patente,
-            motor: { 
-                esperado: motor,
-                encontrado: motorCoincide ? motor : 'No coincide',
-                status: motorCoincide ? 'match' : 'mismatch'
-            },
-            chasis: {
-                esperado: chasis,
-                encontrado: chasisCoincide ? chasis : 'No coincide',
-                status: chasisCoincide ? 'match' : 'mismatch'
-            },
-            suma_asegurada: {
-                esperado: suma,
-                encontrado: sumaCoincide ? suma : 'No coincide',
-                status: sumaCoincide ? 'match' : 'mismatch'
-            }
-        };
-    });
+    return {
+      patente,
+      motor: { 
+        esperado: motor,
+        encontrado: pdfText.includes(motor) ? motor : 'No coincide',
+        status: pdfText.includes(motor) ? 'match' : 'mismatch'
+      },
+      chasis: {
+        esperado: chasis,
+        encontrado: pdfText.includes(chasis) ? chasis : 'No coincide',
+        status: pdfText.includes(chasis) ? 'match' : 'mismatch'
+      },
+      suma_asegurada: {
+        esperado: suma,
+        encontrado: pdfText.includes(suma) ? 'Coincide' : 'No coincide',
+        status: pdfText.includes(suma) ? 'match' : 'mismatch'
+      }
+    };
+  });
 }
         
         // Mostrar resultados en tabla
