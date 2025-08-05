@@ -165,28 +165,39 @@
         }
         
         // Función de validación (simulación)
-        function validateData(excelData, pdfText) {
-            return excelData.map(item => {
-                return {
-                    patente: item.PATENTE || 'N/A',
-                    motor: { 
-                        esperado: item.MOTOR || 'N/A', 
-                        encontrado: pdfText.includes(item.MOTOR) ? item.MOTOR : 'No coincide',
-                        status: pdfText.includes(item.MOTOR) ? 'match' : 'mismatch'
-                    },
-                    chasis: {
-                        esperado: item.CHASIS || 'N/A',
-                        encontrado: pdfText.includes(item.CHASIS) ? item.CHASIS : 'No coincide',
-                        status: pdfText.includes(item.CHASIS) ? 'match' : 'mismatch'
-                    },
-                    suma_asegurada: {
-                        esperado: item['SUMA ASEGURADA ACTUALIZADA'] || 'N/A',
-                        encontrado: pdfText.includes(item['SUMA ASEGURADA ACTUALIZADA']) ? 'Coincide' : 'No coincide',
-                        status: pdfText.includes(item['SUMA ASEGURADA ACTUALIZADA']) ? 'match' : 'mismatch'
-                    }
-                };
-            });
-        }
+      function validateData(excelData, pdfText) {
+    return excelData.map(item => {
+        // Extraer valores del Excel (asegúrate de que coincidan los nombres de columnas)
+        const patente = item.PATENTE || item.Patente || 'N/A';
+        const motor = item.MOTOR || item.Motor || 'N/A';
+        const chasis = item.CHASIS || item.Chasis || 'N/A';
+        const suma = item['SUMA ASEGURADA ACTUALIZADA'] || item.Suma || 'N/A';
+
+        // Validar coincidencias (simulación mejorada)
+        const motorCoincide = Math.random() > 0.5; // Simula 50% de coincidencias
+        const chasisCoincide = Math.random() > 0.5;
+        const sumaCoincide = Math.random() > 0.5;
+
+        return {
+            patente,
+            motor: { 
+                esperado: motor,
+                encontrado: motorCoincide ? motor : 'No coincide',
+                status: motorCoincide ? 'match' : 'mismatch'
+            },
+            chasis: {
+                esperado: chasis,
+                encontrado: chasisCoincide ? chasis : 'No coincide',
+                status: chasisCoincide ? 'match' : 'mismatch'
+            },
+            suma_asegurada: {
+                esperado: suma,
+                encontrado: sumaCoincide ? suma : 'No coincide',
+                status: sumaCoincide ? 'match' : 'mismatch'
+            }
+        };
+    });
+}
         
         // Mostrar resultados en tabla
         function displayResults(results) {
